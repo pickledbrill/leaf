@@ -54,8 +54,8 @@ func main() {
 		oneFinished := false
 		twoFinished := false
 
-		go runTestConnection(cageOneDone, "cage-1")
-		go runTestConnection(cageTwoDone, "cage-2")
+		go runTestConnection(cageOneDone, "cage-1", "angle")
+		go runTestConnection(cageTwoDone, "cage-2", "angle")
 
 		for {
 			select {
@@ -304,10 +304,9 @@ func sendTestData(name string, conn net.Conn, data string) {
 		println(name + " ERROR: " + err.Error())
 		return
 	}
-	time.Sleep(1 * time.Second)
 }
 
-func runTestConnection(channel chan bool, name string) {
+func runTestConnection(channel chan bool, name string, dataType string) {
 	conn, err := net.Dial("tcp", "127.0.0.1:8080")
 	if err != nil {
 		println(err.Error())
@@ -317,13 +316,19 @@ func runTestConnection(channel chan bool, name string) {
 
 	switch name {
 	case "cage-1":
-		for _, v := range cageOneAngleTestData {
-			sendTestData(name, conn, v)
+		if dataType == "angle" {
+			for _, v := range cageOneAngleTestData {
+				sendTestData(name, conn, v)
+				time.Sleep(1 * time.Second)
+			}
 		}
 		break
 	case "cage-2":
-		for _, v := range cageTwoAngleTestData {
-			sendTestData(name, conn, v)
+		if dataType == "angle" {
+			for _, v := range cageTwoAngleTestData {
+				sendTestData(name, conn, v)
+				time.Sleep(1 * time.Second)
+			}
 		}
 		break
 	}
